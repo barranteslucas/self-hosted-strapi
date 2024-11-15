@@ -1,0 +1,43 @@
+version: '3.9'
+services:
+  strapi:
+    container_name: strapi
+    build:
+      context: .
+    environment:
+      DATABASE_SSL: 'false'
+    env_file:
+      - .env
+    hostname: strapi
+    volumes:
+      - ./app:/srv/app
+      - /srv/app/node_modules/
+    ports:
+      - '1337:1337'
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - default
+  mysql:
+    container_name: mysql
+    platform: linux/x86_64
+    image: mysql:8.4.3
+    ports: 
+      - "3306:3306"
+    env_file:
+      - .env
+    hostname: mysql
+    command: --mysql-native-password=ON --log-bin-trust-function-creators=1
+    healthcheck:
+        test: '/usr/bin/mysql -h127.0.0.1 -uroot -p$${MYSQL_ROOT_PASSWORD} --execute "SHOW DATABASES;"'
+        interval: 2s
+        timeout: 20s
+        retries: 10000
+    volumes:
+        - db-volume:/var/lib/mysql
+        - ./dump/:/docker-entrypoint-initdb.d
+    networks:
+        - default
+volumes:
+  db-volume:
