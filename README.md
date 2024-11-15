@@ -1,4 +1,4 @@
-# Self Hosted Wordpress #
+# Self Hosted Strapi (Strapi + MySQL) #
 
 Se corre con `docker compose up -d --build` o tambien si prefieren hice un "convenience script" que se corre con `./init.sh` y ya te resuelve todo.
 
